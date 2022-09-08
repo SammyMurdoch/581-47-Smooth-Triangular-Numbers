@@ -3,6 +3,7 @@ from sympy import primefactors
 from itertools import chain, combinations
 from sympy.abc import t
 from sympy.solvers.diophantine.diophantine import diop_DN
+from time import time
 
 
 def powerset(iterable):
@@ -34,24 +35,27 @@ def is_smooth(p, n):
 
 
 def verify_pair_smoothness(p):
-    if is_smooth(5, p[0]) and is_smooth(5, p[1]):
+    if is_smooth(primes[-1], p[0]) and is_smooth(primes[-1], p[1]):
         return True
 
     return False
 
+total_time = time()
 
-    # for k in range(c):
-    #     x_k, y_k =
+primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 39, 41, 43, 47]
+primes = primes[:7]
+print(primes)
+#primes = [2, 3, 5]
 
-
-#primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 39, 41, 43, 47]
-primes = [2, 3, 5]
+powerset_time = time()
 
 product_list = [1] + [prod(s) for s in powerset(primes)][1:]
 
-solutions_required = max(3, (primes[-1] + 1) / 2)
+print(time()-powerset_time)
 
-smooth_numbers_47 = []
+solutions_required = int(max(3, (primes[-1] + 1) / 2))
+
+smooth_numbers = []
 
 
 for q in product_list:
@@ -63,7 +67,10 @@ for q in product_list:
         pair = ((solution[0]-1)/2, (solution[0]+1)/2)
 
         if verify_pair_smoothness(pair):
-            smooth_numbers_47.append(pair[0])
+            smooth_numbers.append(pair[0])
 
-print(smooth_numbers_47)
+print(smooth_numbers)
+print(len(smooth_numbers))
+print(sum(smooth_numbers))
 
+print(time()-total_time)
