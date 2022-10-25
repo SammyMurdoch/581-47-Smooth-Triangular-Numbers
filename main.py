@@ -1,7 +1,6 @@
 from math import prod
 from sympy import primefactors
 from itertools import chain, combinations
-from sympy.abc import t
 from sympy.solvers.diophantine.diophantine import diop_DN
 from time import time
 
@@ -24,7 +23,13 @@ def get_additional_solutions(f, n, c):
     return solution_list
 
 
+is_smooth_cache = {}
+
+
 def is_smooth(p, n):
+    if n > (10**15)/15:
+        return False
+
     if n == 1:
         return True
 
@@ -40,12 +45,11 @@ def verify_pair_smoothness(p):
 
     return False
 
+
 total_time = time()
 
-primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 39, 41, 43, 47]
-primes = primes[:7]
+primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
 print(primes)
-#primes = [2, 3, 5]
 
 powerset_time = time()
 
@@ -53,21 +57,25 @@ product_list = [1] + [prod(s) for s in powerset(primes)][1:]
 
 print(time()-powerset_time)
 
-solutions_required = int(max(3, (primes[-1] + 1) / 2))
+solutions_required = int(max(3, (primes[-1] + 1) / 2))  # Clearly
 
 smooth_numbers = []
 
 
 for q in product_list:
-    solutions = list(diop_DN(2*q, 1, t))
+    smooth_time = time()
+    solutions = list(diop_DN(2*q, 1))
 
     solutions += get_additional_solutions(solutions[0], 2*q, solutions_required-1)
 
+    #print('{0} solutions'.format(len(solutions)))
     for solution in solutions:
         pair = ((solution[0]-1)/2, (solution[0]+1)/2)
 
         if verify_pair_smoothness(pair):
             smooth_numbers.append(pair[0])
+
+    #print('{0} seconds'.format(time()-smooth_time))
 
 print(smooth_numbers)
 print(len(smooth_numbers))
